@@ -5,15 +5,25 @@ import java.time.LocalDateTime
 
 data class Reminder(
     val id: Int = 0,
-    val name: String = "",
+    val title: String = "",
     val time: LocalDateTime = LocalDateTime.now(),
-    val ringtone: String = ""
+    val ringtone: String = "",
+    val isActive: Boolean = false
 )
 
 // mapper
 fun Reminder.toEntity() = ReminderEntity(
     id = id,
-    name = name,
+    title = title,
     time = time,
-    ringtone = ringtone
+    ringtone = ringtone,
+    isActive = isActive
+)
+
+fun ReminderEntity.toModel() = Reminder(
+    id = id,
+    title = title,
+    time = time,
+    ringtone = ringtone,
+    isActive = isActive
 )

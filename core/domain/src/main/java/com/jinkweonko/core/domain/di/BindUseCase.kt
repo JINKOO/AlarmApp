@@ -1,7 +1,11 @@
 package com.jinkweonko.core.domain.di
 
+import com.jinkweonko.core.domain.usecase.GetAllReminderUseCase
+import com.jinkweonko.core.domain.usecase.GetAllReminderUseCaseImpl
 import com.jinkweonko.core.domain.usecase.InsertReminderUseCase
 import com.jinkweonko.core.domain.usecase.InsertReminderUseCaseImpl
+import com.jinkweonko.core.domain.usecase.UpdateReminderUseCase
+import com.jinkweonko.core.domain.usecase.UpdateReminderUseCaseImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -15,5 +19,16 @@ abstract class BindUseCase {
     abstract fun bindInsertReminderUseCase(
         insertReminderUseCaseImpl: InsertReminderUseCaseImpl
     ): InsertReminderUseCase
+
+    @Binds
+    abstract fun bindGetAllReminderUseCase(
+        getAllReminderUseCaseImpl: GetAllReminderUseCaseImpl
+    ): GetAllReminderUseCase
+
+    @Binds
+    abstract fun bindUpdateReminderUseCase(
+        updateReminderUseCaseImpl: UpdateReminderUseCaseImpl
+    ): UpdateReminderUseCase
+
 
 }

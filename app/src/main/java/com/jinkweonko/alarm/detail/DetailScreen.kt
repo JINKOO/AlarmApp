@@ -1,5 +1,13 @@
 package com.jinkweonko.alarm.detail
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.media.RingtoneManager
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +23,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -31,7 +41,6 @@ import com.jinkweonko.alarm.R
 import com.jinkweonko.core.ui.button.BottomFullButton
 import com.jinkweonko.core.ui.theme.AlarmAppTheme
 import com.jinkweonko.core.ui.topappbar.CommonTopAppBar
-import timber.log.Timber
 import java.time.LocalDateTime
 
 @Composable
@@ -42,6 +51,26 @@ fun DetailScreen(
 ) {
     var reminderTitle by remember { mutableStateOf("") }
     val scrollState = rememberScrollState()
+    val context = LocalContext.current
+    var selectedRingtoneUri by remember {
+        mutableStateOf<Uri?>(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
+    }
+    var selectedRingtoneTitle by remember {
+        mutableStateOf(getRingtoneTitle(context, selectedRingtoneUri))
+    }
+    val launchRingtonePicker = rememberRingtonePickerLauncher(
+        currentRingtoneUri = selectedRingtoneUri,
+        pickerActivityTitle = stringResource(id = R.string.select_alarm_sound),
+        onRingtoneSelected = { uri, title ->
+            selectedRingtoneUri = uri
+            selectedRingtoneTitle = title
+        }
+    )
+
+    LaunchedEffect(selectedRingtoneUri) {
+        selectedRingtoneTitle = getRingtoneTitle(context, selectedRingtoneUri)
+    }
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -52,8 +81,8 @@ fun DetailScreen(
                 title = stringResource(R.string.button_save),
                 enabled = reminderTitle.isNotEmpty(),
                 onClick = {
-                    viewModel.addReminder()
-//                    navigateUp()
+                    viewModel.addReminder(reminderTitle, selectedRingtoneTitle)
+                    navigateUp()
                 }
             )
         },
@@ -66,17 +95,17 @@ fun DetailScreen(
                 .verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(32.dp)
         ) {
-            // 1. 리마인더 이름
             TitleTextField(
                 modifier = Modifier.fillMaxWidth(),
                 reminderTitle = reminderTitle,
                 onValueChange = { reminderTitle = it }
             )
-            // 2. 시간 설정
             TimePickerBox()
-
-            // 3. 벨소리 설정
-            RingtoneSelectRow()
+            RingtoneSelectRow(
+                modifier = Modifier.fillMaxWidth(),
+                selectedRingtoneTitle = selectedRingtoneTitle,
+                onClickRingtone = launchRingtonePicker
+            )
         }
     }
 }
@@ -131,8 +160,6 @@ private fun TimePickerBox(
         initialMinute = currentTime.minute
     )
 
-    Timber.d("timePickerState : ${timePickerState.hour} : ${timePickerState.minute}")
-
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -154,10 +181,12 @@ private fun TimePickerBox(
 
 @Composable
 private fun RingtoneSelectRow(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    selectedRingtoneTitle: String,
+    onClickRingtone: () -> Unit
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier.clickable { onClickRingtone() },
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
@@ -166,8 +195,55 @@ private fun RingtoneSelectRow(
             fontWeight = FontWeight.Bold,
             color = Color.White
         )
+        Text(
+            text = selectedRingtoneTitle,
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.LightGray
+        )
     }
 }
+
+@Composable
+internal fun rememberRingtonePickerLauncher(
+    currentRingtoneUri: Uri?,
+    pickerActivityTitle: String,
+    onRingtoneSelected: (uri: Uri?, title: String) -> Unit
+): () -> Unit {
+    val context = LocalContext.current
+    val ringtonePickerLauncherActivity = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val pickedUri: Uri? = result.data?.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+            val finalUri = if (RingtoneManager.isDefault(pickedUri)) {
+                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+            } else {
+                pickedUri
+            }
+            val title = getRingtoneTitle(context, finalUri)
+            onRingtoneSelected(finalUri, title)
+        }
+    }
+
+    return {
+        val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+            putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
+            putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, pickerActivityTitle)
+            putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, currentRingtoneUri)
+            putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
+            putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true)
+        }
+        ringtonePickerLauncherActivity.launch(intent)
+    }
+}
+
+private fun getRingtoneTitle(context: Context, uri: Uri?): String {
+    return when (uri) {
+        null -> context.getString(R.string.silent_ringtone)
+        else -> RingtoneManager.getRingtone(context, uri)?.getTitle(context) ?: context.getString(R.string.unknown_ringtone)
+    }
+}
+
 
 @Preview
 @Composable

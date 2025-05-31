@@ -8,4 +8,9 @@
     <string name="placeholder_reminder_title">please enter a name</string>
     <string name="title_time_picker">시간 설정</string>
     <string name="title_select_ringtone">벨소리</string>
+    <string name="no_ringtone_selected">선택된 벨소리 없음</string>
+    <string name="silent_ringtone">무음</string>
+    <string name="select_alarm_sound">알람음 선택</string>
+    <string name="default_ringtone_display_name">기본 벨소리</string>
+    <string name="unknown_ringtone">알 수 없는 벨소리</string>
 </resources>

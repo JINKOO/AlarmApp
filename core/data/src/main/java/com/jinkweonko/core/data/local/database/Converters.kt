@@ -12,7 +12,7 @@ class Converters {
     }
 
     @TypeConverter
-    fun localDateTimeToLong(localDateTime: LocalDateTime): Long? {
+    fun toLocalDateTime(localDateTime: LocalDateTime): Long? {
         return localDateTime.atZone(ZoneId.systemDefault()).toEpochSecond()
     }
 }

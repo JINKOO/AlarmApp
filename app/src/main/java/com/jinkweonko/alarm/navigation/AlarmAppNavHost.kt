@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.jinkweonko.alarm.detail.DetailScreen
 import com.jinkweonko.alarm.detail.DetailViewModel
 import com.jinkweonko.alarm.home.HomeScreen
+import com.jinkweonko.alarm.home.HomeViewModel
 
 @Composable
 fun AlarmAppNavHost() {
@@ -22,6 +23,7 @@ fun AlarmAppNavHost() {
     ) {
         composable(Home.route) {
             HomeScreen(
+                viewModel = hiltViewModel<HomeViewModel>(),
                 navigateToDetail = {
                     navController.navigateWithSingleTop(AlarmDetail.route)
                 }

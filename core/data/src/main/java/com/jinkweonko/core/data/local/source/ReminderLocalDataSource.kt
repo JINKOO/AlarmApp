@@ -5,5 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface ReminderLocalDataSource {
     suspend fun insertReminder(reminderEntity: ReminderEntity)
-    fun getAllReminders(): Flow<ReminderEntity>
+    suspend fun updateReminder(reminderEntity: ReminderEntity)
+    fun getAllReminders(): Flow<List<ReminderEntity>>
 }

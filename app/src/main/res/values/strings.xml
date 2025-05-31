@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">AlarmApp</string>
+    <string name="title_home_screen">리마인더</string>
+    <string name="button_add_reminder">리마인더 추가</string>
+    <string name="title_reminder_detail">리마인더 설정</string>
+    <string name="button_save">Save</string>
+    <string name="title_reminder">리마인더 이름</string>
+    <string name="placeholder_reminder_title">please enter a name</string>
+    <string name="title_time_picker">시간 설정</string>
+    <string name="title_select_ringtone">벨소리</string>
+</resources>

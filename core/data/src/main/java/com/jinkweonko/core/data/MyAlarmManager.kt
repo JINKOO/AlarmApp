@@ -19,18 +19,20 @@ class MyAlarmManager @Inject constructor(
         context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     fun setReminder(reminderEntity: ReminderEntity) {
-        val alarmIntent = Intent(context, MyAlarmBroadCastReceiver::class.java).let { intent ->
-            PendingIntent.getBroadcast(
-                context,
-                reminderEntity.id,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
+        val alarmIntent = Intent(context, MyAlarmBroadCastReceiver::class.java).apply {
+            putExtra("REMINDER_ID", reminderEntity.id)
+            putExtra("REMINDER_TITLE", reminderEntity.title)
         }
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            reminderEntity.id,
+            alarmIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
         alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC,
+            AlarmManager.RTC_WAKEUP,
             reminderEntity.time.atZone(ZoneId.systemDefault()).toEpochSecond(),
-            alarmIntent
+            pendingIntent
         )
     }
 

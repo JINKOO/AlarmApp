@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 @Entity(tableName = "reminders")
 data class ReminderEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Int = 0,
     val title: String,
     val time: LocalDateTime,
     val ringtone: String,

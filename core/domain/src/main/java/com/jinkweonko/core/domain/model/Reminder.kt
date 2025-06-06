@@ -13,7 +13,6 @@ data class Reminder(
 
 // mapper
 fun Reminder.toEntity() = ReminderEntity(
-    id = id,
     title = title,
     time = time,
     ringtone = ringtone,

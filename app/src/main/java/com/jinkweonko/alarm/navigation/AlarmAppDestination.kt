@@ -11,3 +11,7 @@ object Home : AlarmAppDestination {
 object AlarmDetail : AlarmAppDestination {
     override val route = "alarm_detail"
 }
+
+object Alarm: AlarmAppDestination {
+    override val route = "alarm/{alarmId}"
+}

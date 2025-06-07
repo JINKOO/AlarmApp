@@ -1,18 +1,19 @@
 package com.jinkweonko.core.data.local.database
 
 import androidx.room.TypeConverter
+import com.jinkweonko.util.extension.toMillis
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 
 class Converters {
     @TypeConverter
-    fun fromLocalDateTime(value: Long): LocalDateTime? {
-        return LocalDateTime.ofInstant(Instant.ofEpochSecond(value), ZoneId.systemDefault())
+    fun toLocalDateTime(value: Long): LocalDateTime? {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(value), ZoneId.systemDefault())
     }
 
     @TypeConverter
-    fun toLocalDateTime(localDateTime: LocalDateTime): Long? {
-        return localDateTime.atZone(ZoneId.systemDefault()).toEpochSecond()
+    fun fromLocalDateTime(localDateTime: LocalDateTime): Long? {
+        return localDateTime.toMillis()
     }
 }

@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,6 +44,7 @@ import com.jinkweonko.core.ui.theme.AlarmAppTheme
 import com.jinkweonko.core.ui.topappbar.CommonTopAppBar
 import java.time.LocalDateTime
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
     modifier: Modifier = Modifier,
@@ -58,6 +60,11 @@ fun DetailScreen(
     var selectedRingtoneTitle by remember {
         mutableStateOf(getRingtoneTitle(context, selectedRingtoneUri))
     }
+    val timePickerState = rememberTimePickerState(
+        initialHour = LocalDateTime.now().hour,
+        initialMinute = LocalDateTime.now().minute
+    )
+
     val launchRingtonePicker = rememberRingtonePickerLauncher(
         currentRingtoneUri = selectedRingtoneUri,
         pickerActivityTitle = stringResource(id = R.string.select_alarm_sound),
@@ -81,7 +88,12 @@ fun DetailScreen(
                 title = stringResource(R.string.button_save),
                 enabled = reminderTitle.isNotEmpty(),
                 onClick = {
-                    viewModel.addReminder(reminderTitle, selectedRingtoneTitle)
+                    viewModel.addReminder(
+                        title = reminderTitle,
+                        hour = timePickerState.hour,
+                        minute = timePickerState.minute,
+                        ringtoneTitle = selectedRingtoneTitle
+                    )
                     navigateUp()
                 }
             )
@@ -100,7 +112,9 @@ fun DetailScreen(
                 reminderTitle = reminderTitle,
                 onValueChange = { reminderTitle = it }
             )
-            TimePickerBox()
+            TimePickerBox(
+                timePickerState = timePickerState
+            )
             RingtoneSelectRow(
                 modifier = Modifier.fillMaxWidth(),
                 selectedRingtoneTitle = selectedRingtoneTitle,
@@ -153,13 +167,8 @@ private fun TitleTextField(
 @Composable
 private fun TimePickerBox(
     modifier: Modifier = Modifier,
-    currentTime: LocalDateTime = LocalDateTime.now()
+    timePickerState: TimePickerState
 ) {
-    val timePickerState = rememberTimePickerState(
-        initialHour = currentTime.hour,
-        initialMinute = currentTime.minute
-    )
-
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp),

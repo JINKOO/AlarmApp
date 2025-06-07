@@ -4,7 +4,9 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import com.jinkweonko.core.data.entity.ReminderEntity
+import com.jinkweonko.util.extension.toMillis
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -31,7 +33,7 @@ class MyAlarmManager @Inject constructor(
         )
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
-            reminderEntity.time.atZone(ZoneId.systemDefault()).toEpochSecond(),
+            reminderEntity.time.toMillis(),
             pendingIntent
         )
     }

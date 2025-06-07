@@ -1,5 +1,6 @@
 package com.jinkweonko.alarm.detail
 
+import androidx.compose.material3.TimePickerState
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,7 +15,6 @@ import javax.inject.Inject
 
 data class UiState(
     val isLoading: Boolean = false,
-    val reminder: Reminder = Reminder()
 )
 
 @HiltViewModel
@@ -36,12 +36,14 @@ class DetailViewModel @Inject constructor(
 
     fun addReminder(
         title: String,
+        hour: Int,
+        minute: Int,
         ringtoneTitle: String = "",
     ) = viewModelScope.launch {
         insertReminderUseCase.insertReminder(
             Reminder(
                 title = title,
-                time = LocalDateTime.now(),
+                time = LocalDateTime.now().withHour(hour).withMinute(minute),
                 ringtone = ringtoneTitle,
                 isActive = true
             )

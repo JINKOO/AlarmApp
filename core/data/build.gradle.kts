@@ -58,4 +58,6 @@ dependencies {
 
     // desugaring
     coreLibraryDesugaring(libs.desugaring)
+
+    implementation(project(":core:util"))
 }

@@ -3,7 +3,7 @@
 
     <application>
         <receiver
-            android:name=".MyAlarmBroadCastReceiver"
+            android:name="com.jinkweonko.alarm.MyAlarmBroadCastReceiver"
             android:enabled="true"
             android:exported="true" />
     </application>

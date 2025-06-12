@@ -17,6 +17,8 @@
             <option value="$PROJECT_DIR$/core/domain" />
             <option value="$PROJECT_DIR$/core/ui" />
             <option value="$PROJECT_DIR$/core/util" />
+            <option value="$PROJECT_DIR$/manager" />
+            <option value="$PROJECT_DIR$/manager/alarm" />
           </set>
         </option>
       </GradleProjectSettings>

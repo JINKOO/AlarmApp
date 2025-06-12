@@ -1,15 +1,12 @@
-package com.jinkweonko.core.data
+package com.jinkweonko.alarm
 
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import com.jinkweonko.core.data.entity.ReminderEntity
+import com.jinkweonko.core.domain.model.Reminder
 import com.jinkweonko.util.extension.toMillis
 import dagger.hilt.android.qualifiers.ApplicationContext
-import java.time.LocalDateTime
-import java.time.ZoneId
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,29 +17,29 @@ class MyAlarmManager @Inject constructor(
     val alarmManager: AlarmManager =
         context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-    fun setReminder(reminderEntity: ReminderEntity) {
+    fun setReminder(reminder: Reminder) {
         val alarmIntent = Intent(context, MyAlarmBroadCastReceiver::class.java).apply {
-            putExtra("REMINDER_ID", reminderEntity.id)
-            putExtra("REMINDER_TITLE", reminderEntity.title)
+            putExtra("REMINDER_ID", reminder.id)
+            putExtra("REMINDER_TITLE", reminder.title)
         }
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            reminderEntity.id,
+            reminder.id,
             alarmIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
-            reminderEntity.time.toMillis(),
+            reminder.time.toMillis(),
             pendingIntent
         )
     }
 
-    fun cancelReminder(reminderEntity: ReminderEntity) {
+    fun cancelReminder(reminder: Reminder) {
         alarmManager.cancel(
             PendingIntent.getBroadcast(
                 context,
-                reminderEntity.id,
+                reminder.id,
                 Intent(context, MyAlarmBroadCastReceiver::class.java),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )

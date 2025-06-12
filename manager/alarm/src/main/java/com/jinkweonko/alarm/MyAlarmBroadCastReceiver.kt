@@ -1,4 +1,4 @@
-package com.jinkweonko.core.data
+package com.jinkweonko.alarm
 
 import android.app.AlarmManager
 import android.app.NotificationChannel
@@ -85,7 +85,6 @@ class MyAlarmBroadCastReceiver : BroadcastReceiver() {
             }
             notificationManager.createNotificationChannel(channel)
         }
-
         val fullScreenIntent = Intent(
             Intent.ACTION_VIEW,
             Uri.parse("reminders://alarm/$reminderId")
@@ -99,7 +98,6 @@ class MyAlarmBroadCastReceiver : BroadcastReceiver() {
             fullScreenIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-
         val dismissIntent = Intent(context, MyAlarmBroadCastReceiver::class.java).apply {
             action = ACTION_DISMISS
             putExtra("REMINDER_ID", reminderId)
@@ -121,7 +119,6 @@ class MyAlarmBroadCastReceiver : BroadcastReceiver() {
             snoozeIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-
         val notificationBuilder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("알람")
@@ -133,7 +130,6 @@ class MyAlarmBroadCastReceiver : BroadcastReceiver() {
             .addAction(0, "해제", dismissPendingIntent)
             .addAction(0, "10분 후 다시 울리기", snoozePendingIntent)
             .build()
-
         notificationManager.notify(reminderId, notificationBuilder)
     }
 

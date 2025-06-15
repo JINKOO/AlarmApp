@@ -19,8 +19,8 @@ class MyAlarmManager @Inject constructor(
 
     fun setReminder(reminder: Reminder) {
         val alarmIntent = Intent(context, MyAlarmBroadCastReceiver::class.java).apply {
-            putExtra("REMINDER_ID", reminder.id)
-            putExtra("REMINDER_TITLE", reminder.title)
+            putExtra(MyAlarmBroadCastReceiver.REMINDER_ID, reminder.id)
+            putExtra(MyAlarmBroadCastReceiver.REMINDER_TITLE, reminder.title)
         }
         val pendingIntent = PendingIntent.getBroadcast(
             context,

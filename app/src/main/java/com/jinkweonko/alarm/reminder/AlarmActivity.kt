@@ -44,7 +44,6 @@ class AlarmActivity : ComponentActivity() {
     }
 
     private fun turnOnScreen() {
-        // 잠금화면 위로 Activity를 보여주고, 화면을 켭니다.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
             setTurnScreenOn(true)

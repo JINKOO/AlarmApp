@@ -29,7 +29,7 @@ class AlarmMusicService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val reminderId = intent?.getStringExtra(MyAlarmBroadCastReceiver.REMINDER_ID).orEmpty()
+        val reminderId = intent?.getIntExtra(MyAlarmBroadCastReceiver.REMINDER_ID, 0) ?: 0
         val reminderTitle = intent?.getStringExtra(MyAlarmBroadCastReceiver.REMINDER_TITLE) ?: "리마인더"
         when(intent?.action) {
             ACTION_START -> {
@@ -64,7 +64,7 @@ class AlarmMusicService : Service() {
         ringtone.play()
     }
 
-    private fun createNotification(reminderId: String, reminderTitle: String): Notification {
+    private fun createNotification(reminderId: Int, reminderTitle: String): Notification {
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val serviceChannel = NotificationChannel(
@@ -74,10 +74,9 @@ class AlarmMusicService : Service() {
             )
             notificationManager.createNotificationChannel(serviceChannel)
         }
-
         val fullScreenIntent = Intent(
             Intent.ACTION_VIEW,
-            Uri.parse("reminders://alarm/1")
+            Uri.parse("reminders://alarm/$reminderId")
         )
         val fullScreenPendingIntent = PendingIntent.getActivity(
             this,
@@ -106,7 +105,7 @@ class AlarmMusicService : Service() {
             .addAction(0, "해제", dismissPendingIntent)
             .build()
             .also {
-                notificationManager.notify(reminderId.toInt(), it)
+                notificationManager.notify(reminderId, it)
             }
     }
 

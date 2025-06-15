@@ -1,10 +1,12 @@
 package com.jinkweonko.alarm.reminder
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,25 +20,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.jinkweonko.alarm.MainActivity
 import com.jinkweonko.core.ui.theme.AlarmAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
 @AndroidEntryPoint
 class AlarmActivity : ComponentActivity() {
+
+    private val viewModel by viewModels<ReminderViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val alarmId = intent.data?.lastPathSegment
+        val reminderId = intent.data?.getQueryParameter("reminderId")
         val message = intent.getStringExtra("REMINDER_MESSAGE") ?: "알람 시간입니다!"
-
-        Timber.d("AlarmActivity onCreate() for alarmId: $alarmId with message: $message")
+        viewModel.setReminderId(reminderId)
         turnOnScreen()
         setContent {
             AlarmAppTheme {
                 AlarmScreen(
                     alarmMessage = message,
                     onDismiss = {
-                        finish()
+                        navigateToMain()
                     }
                 )
             }
@@ -57,10 +62,21 @@ class AlarmActivity : ComponentActivity() {
             )
         }
     }
+
+    private fun navigateToMain() {
+        val intent = Intent(this@AlarmActivity, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
+        startActivity(intent)
+        finish()
+    }
 }
 
 @Composable
-fun AlarmScreen(alarmMessage: String, onDismiss: () -> Unit) {
+fun AlarmScreen(
+    alarmMessage: String,
+    onDismiss: () -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,

@@ -15,7 +15,7 @@ class MyAlarmBroadCastReceiver : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        val reminderId = intent.getStringExtra(REMINDER_ID) ?: 0
+        val reminderId = intent.getIntExtra(REMINDER_ID, 0)
         val reminderTitle = intent.getStringExtra(REMINDER_TITLE) ?: "알람 시간입니다!"
 
         val serviceIntent = Intent(context, AlarmMusicService::class.java).apply {

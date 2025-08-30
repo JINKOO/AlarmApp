@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.sp
 import com.jinkweonko.alarm.MainActivity
 import com.jinkweonko.core.ui.theme.AlarmAppTheme
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 @AndroidEntryPoint
 class AlarmActivity : ComponentActivity() {
@@ -32,15 +31,19 @@ class AlarmActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val reminderId = intent.data?.getQueryParameter("reminderId")
+        val reminderId = intent.data?.lastPathSegment.orEmpty()
+        if (reminderId.isEmpty()) {
+            navigateToMain()
+            return
+        }
         val message = intent.getStringExtra("REMINDER_MESSAGE") ?: "알람 시간입니다!"
-        viewModel.setReminderId(reminderId)
         turnOnScreen()
         setContent {
             AlarmAppTheme {
                 AlarmScreen(
                     alarmMessage = message,
                     onDismiss = {
+                        viewModel.dismissAlarm(reminderId.toInt())
                         navigateToMain()
                     }
                 )

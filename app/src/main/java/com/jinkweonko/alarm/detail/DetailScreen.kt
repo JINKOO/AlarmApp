@@ -38,7 +38,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jinkweonko.alarm.R
+import com.jinkweonko.core.model.reminder.Reminder
 import com.jinkweonko.core.ui.button.BottomFullButton
 import com.jinkweonko.core.ui.theme.AlarmAppTheme
 import com.jinkweonko.core.ui.topappbar.CommonTopAppBar
@@ -51,20 +53,24 @@ fun DetailScreen(
     viewModel: DetailViewModel,
     navigateUp: () -> Unit
 ) {
-    var reminderTitle by remember { mutableStateOf("") }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    if (uiState.isLoading) return
+
     val scrollState = rememberScrollState()
     val context = LocalContext.current
+
+    var reminderTitle by remember { mutableStateOf("") }
+    val timePickerState = rememberTimePickerState(
+        initialHour = uiState.reminder.time.hour,
+        initialMinute = uiState.reminder.time.minute
+    )
     var selectedRingtoneUri by remember {
         mutableStateOf<Uri?>(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
     }
     var selectedRingtoneTitle by remember {
         mutableStateOf(getRingtoneTitle(context, selectedRingtoneUri))
     }
-    val timePickerState = rememberTimePickerState(
-        initialHour = LocalDateTime.now().hour,
-        initialMinute = LocalDateTime.now().minute
-    )
-
     val launchRingtonePicker = rememberRingtonePickerLauncher(
         currentRingtoneUri = selectedRingtoneUri,
         pickerActivityTitle = stringResource(id = R.string.select_alarm_sound),

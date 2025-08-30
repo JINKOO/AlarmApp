@@ -16,5 +16,8 @@ class ReminderLocalDataSourceImpl @Inject constructor(
         reminderDao.update(reminderEntity)
     }
 
+    override suspend fun getReminder(reminderId: Int): ReminderEntity? =
+        reminderDao.getReminder(reminderId)
+
     override fun getAllReminders(): Flow<List<ReminderEntity>> = reminderDao.getAllReminders()
 }

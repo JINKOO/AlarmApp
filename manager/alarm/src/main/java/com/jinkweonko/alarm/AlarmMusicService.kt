@@ -89,7 +89,7 @@ class AlarmMusicService : Service() {
         }
         val dismissPendingIntent = PendingIntent.getService(
             this,
-            0,
+            reminderId,
             dismissIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -104,9 +104,6 @@ class AlarmMusicService : Service() {
             .setAutoCancel(true)
             .addAction(0, "해제", dismissPendingIntent)
             .build()
-            .also {
-                notificationManager.notify(reminderId, it)
-            }
     }
 
     override fun onDestroy() {

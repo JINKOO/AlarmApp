@@ -2,9 +2,9 @@ package com.jinkweonko.alarm.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jinkweonko.core.domain.model.Reminder
 import com.jinkweonko.core.domain.usecase.GetAllReminderUseCase
 import com.jinkweonko.core.domain.usecase.UpdateReminderUseCase
+import com.jinkweonko.core.model.reminder.Reminder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

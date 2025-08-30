@@ -1,8 +1,8 @@
 package com.jinkweonko.core.domain.usecase
 
 import com.jinkweonko.core.data.repository.ReminderRepository
-import com.jinkweonko.core.domain.model.Reminder
 import com.jinkweonko.core.domain.model.toModel
+import com.jinkweonko.core.model.reminder.Reminder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

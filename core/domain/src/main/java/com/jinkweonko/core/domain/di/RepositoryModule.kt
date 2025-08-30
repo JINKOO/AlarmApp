@@ -1,7 +1,7 @@
-package com.jinkweonko.core.data.di
+package com.jinkweonko.core.domain.di
 
 import com.jinkweonko.core.data.repository.ReminderRepository
-import com.jinkweonko.core.data.repository.ReminderRepositoryImpl
+import com.jinkweonko.core.domain.repository.ReminderRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

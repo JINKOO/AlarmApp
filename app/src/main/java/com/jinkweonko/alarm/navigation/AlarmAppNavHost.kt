@@ -29,12 +29,16 @@ fun AlarmAppNavHost() {
             HomeScreen(
                 viewModel = hiltViewModel<HomeViewModel>(),
                 navigateToDetail = {
-                    navController.navigateWithSingleTop(AlarmDetail.route)
+                    navController.navigateWithSingleTop("alarm_detail/$it")
                 }
             )
         }
 
-        composable(AlarmDetail.route) {
+        composable(
+            route = AlarmDetail.route,
+            arguments = listOf(navArgument("alarmId") { type = NavType.IntType })
+        ) {
+            val reminderId = it.arguments?.getInt("alarmId")
             DetailScreen(
                 viewModel = hiltViewModel<DetailViewModel>(),
                 navigateUp = navController::navigateUp
@@ -50,7 +54,6 @@ fun AlarmAppNavHost() {
                 }
             )
         ) { backStackEntry ->
-            val alarmId = backStackEntry.arguments?.getInt("alarmId")
             ReminderScreen()
         }
     }

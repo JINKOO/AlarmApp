@@ -54,6 +54,6 @@ dependencies {
     // desugaring
     coreLibraryDesugaring(libs.desugaring)
 
-    implementation(project(":core:domain"))
+    implementation(project(":core:model"))
     implementation(project(":core:util"))
 }

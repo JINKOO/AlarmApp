@@ -4,7 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import com.jinkweonko.core.domain.model.Reminder
+import com.jinkweonko.core.model.reminder.Reminder
 import com.jinkweonko.util.extension.toMillis
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -35,14 +35,16 @@ class MyAlarmManager @Inject constructor(
         )
     }
 
-    fun cancelReminder(reminder: Reminder) {
-        alarmManager.cancel(
-            PendingIntent.getBroadcast(
-                context,
-                reminder.id,
-                Intent(context, MyAlarmBroadCastReceiver::class.java),
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
+    fun cancelReminder(reminderId: Int) {
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            reminderId,
+            Intent(context, MyAlarmBroadCastReceiver::class.java),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+        alarmManager.cancel(pendingIntent)
+
+        val serviceIntent = Intent(context, AlarmMusicService::class.java)
+        context.stopService(serviceIntent)
     }
 }
